@@ -656,3 +656,20 @@ procdump(void)
     printf("\n");
   }
 }
+
+//collect not UNUSED for sysinfo
+uint64
+procnums(void)
+{
+  struct proc *p;
+  uint64 n=0;
+  for (p=proc; p<&proc[NPROC]; p++) {
+    if(p->state==UNUSED){
+      continue;
+    }
+    else{
+      n++;
+    }
+  }
+  return n;
+}
