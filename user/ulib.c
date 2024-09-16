@@ -1,10 +1,8 @@
 #include "kernel/types.h"
 #include "kernel/stat.h"
 #include "kernel/fcntl.h"
-#ifdef LAB_PGTBL
 #include "kernel/riscv.h"
 #include "kernel/memlayout.h"
-#endif
 #include "user/user.h"
 
 

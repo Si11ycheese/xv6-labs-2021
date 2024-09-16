@@ -432,3 +432,31 @@ copyinstr(pagetable_t pagetable, char *dst, uint64 srcva, uint64 max)
     return -1;
   }
 }
+
+//print a page table 
+static  char *prefix[3]={"..",".. .."," .. .. .."};
+
+void
+vmprint_helper(pagetable_t pagetable,int count){
+  if(count>2){
+    return;
+  }
+  for(int i=0;i<512;i++){
+    pte_t pte=pagetable[i];
+    //如果pte存在，则打印页表信息。
+    if(pte&PTE_V){
+      uint64 child=PTE2PA(pte);
+      printf("%s%d: pte %p pa %p\n", prefix[count],i,pte,child);
+      //如果pte不能写、读、执行，则仍为一二级页表，需要继续递归
+      if((pte & (PTE_R|PTE_W|PTE_X)) == 0){
+       vmprint_helper((pagetable_t)child,count+1);
+      }
+    }
+  }
+}
+
+void
+vmprint(pagetable_t pagetable){
+  printf("page table %p\n",pagetable);
+  vmprint_helper(pagetable,0);
+}
