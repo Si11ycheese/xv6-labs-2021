@@ -52,7 +52,6 @@ usertrap(void)
   
   if(r_scause() == 8){
     // system call
-
     if(p->killed)
       exit(-1);
 
@@ -77,8 +76,19 @@ usertrap(void)
     exit(-1);
 
   // give up the CPU if this is a timer interrupt.
-  if(which_dev == 2)
+  if(which_dev == 2){
+    //user_space to kernel_space
+    //detailed info is in https://sillycheese.netlify.app/posts/6.s081-note04/
+    if(p&& p->past_ticks> 0){
+      p->past_ticks--;
+      if(p->past_ticks == 0){
+        p->past_ticks = p->ticks; // reset ticks
+        // save the handler's address into epc
+        p->trapframe->epc=(uint64)p->signal_handler;
+      }
     yield();
+  }
+  }
 
   usertrapret();
 }

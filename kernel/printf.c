@@ -121,6 +121,7 @@ panic(char *s)
   printf("panic: ");
   printf(s);
   printf("\n");
+  backtrace();
   panicked = 1; // freeze uart output from other CPUs
   for(;;)
     ;
@@ -131,4 +132,27 @@ printfinit(void)
 {
   initlock(&pr.lock, "pr");
   pr.locking = 1;
+}
+
+
+
+// when you find your output seems to be different, go to addr2line -e kernel/kernel to find the file linked with the address
+void
+backtrace()
+{
+  //frame pointer
+  uint64 fp;
+  //register address
+  uint64 ra;
+  //uint64 *p;
+ // int i;
+
+  printf("backtrace:\n");
+  fp = r_fp();
+  uint64 temp=fp;
+  while ((fp>=PGROUNDDOWN(temp))&&(fp<=PGROUNDUP(temp))) {
+    ra=*(uint64*)(fp-8);
+    printf("%p\n",ra);
+    fp=*(uint64*)(fp-16);
+  }
 }

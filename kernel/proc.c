@@ -53,6 +53,8 @@ procinit(void)
   for(p = proc; p < &proc[NPROC]; p++) {
       initlock(&p->lock, "proc");
       p->kstack = KSTACK((int) (p - proc));
+      // initialize the past_ticks
+      p->past_ticks = p->ticks;
   }
 }
 
