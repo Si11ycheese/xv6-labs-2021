@@ -33,6 +33,9 @@ trapinithart(void)
 // handle an interrupt, exception, or system call from user space.
 // called from trampoline.S
 //
+//
+//Modify usertrap() to recognize page faults. 
+//When a page-fault occurs on a COW page, allocate a new page with kalloc(), copy the old page to the new page, and install the new page in the PTE with PTE_W set.
 void
 usertrap(void)
 {
@@ -67,7 +70,15 @@ usertrap(void)
     syscall();
   } else if((which_dev = devintr()) != 0){
     // ok
-  } else {
+  }
+  //allocate a new page with kalloc(), copy the old page to the new page, and install the new page in the PTE with PTE_W set. 
+  else if(r_scause()==13){
+    char *mem;
+    uint64 va=r_stval();
+
+
+  }
+   else {
     printf("usertrap(): unexpected scause %p pid=%d\n", r_scause(), p->pid);
     printf("            sepc=%p stval=%p\n", r_sepc(), r_stval());
     p->killed = 1;
