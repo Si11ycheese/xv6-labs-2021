@@ -29,6 +29,8 @@ trapinithart(void)
   w_stvec((uint64)kernelvec);
 }
 
+
+
 //
 // handle an interrupt, exception, or system call from user space.
 // called from trampoline.S
@@ -49,6 +51,7 @@ usertrap(void)
   w_stvec((uint64)kernelvec);
 
   struct proc *p = myproc();
+  
   
   // save user program counter.
   p->trapframe->epc = r_sepc();
@@ -72,10 +75,36 @@ usertrap(void)
     // ok
   }
   //allocate a new page with kalloc(), copy the old page to the new page, and install the new page in the PTE with PTE_W set. 
-  else if(r_scause()==13){
-    char *mem;
+  else if(r_scause() == 15){
+    /* char *mem;
+    pte_t *pte=0;
+    uint64 pa;
+    uint64 flags;
     uint64 va=r_stval();
+    if((mem=kalloc())==0){
+      printf("usertrap(): out of memory\n");
+      p->killed=1;
+    }
+    if((pa=walkaddr(p->pagetable, va))==0){
+      printf("usertrap(): address not mapped\n");
+      p->killed=1;
+    }
+    memmove(mem, (char*)pa, PGSIZE);
+    kfree((void*)pa);
+    *pte=PA2PTE(pa);
+    flags=PTE_FLAGS(*pte);
+    //if(mappages(p->pagetable, va, PGSIZE, (uint64)mem, flags)!=0){
+    //  kfree(mem);
+    //  p->killed=1;
+    //}
 
+    //install the new page in the PTE with PTE_W  set
+
+    *pte = PA2PTE(mem) | flags | PTE_W;
+    *pte &= ~PTE_COW; */
+
+    if (cowhandler(p->pagetable, r_stval()) < 0)
+      p->killed = 1;
 
   }
    else {
