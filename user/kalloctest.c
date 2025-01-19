@@ -1,5 +1,5 @@
-#include "kernel/param.h"
 #include "kernel/types.h"
+#include "kernel/param.h"
 #include "kernel/stat.h"
 #include "kernel/riscv.h"
 #include "kernel/memlayout.h"
@@ -41,7 +41,7 @@ void test1(void)
 {
   void *a, *a1;
   int n, m;
-  printf("start test1\n");  
+  printf("start test1\n");
   m = ntas(0);
   for(int i = 0; i < NCHILD; i++){
     int pid = fork();
@@ -68,7 +68,7 @@ void test1(void)
   }
   printf("test1 results:\n");
   n = ntas(1);
-  if(n-m < 10) 
+  if(n-m < 10)
     printf("test1 OK\n");
   else
     printf("test1 FAIL\n");
@@ -100,7 +100,7 @@ void test2() {
   int free0 = countfree();
   int free1;
   int n = (PHYSTOP-KERNBASE)/PGSIZE;
-  printf("start test2\n");  
+  printf("start test2\n");
   printf("total free number of pages: %d (out of %d)\n", free0, n);
   if(n - free0 > 1000) {
     printf("test2 FAILED: cannot allocate enough memory");
@@ -115,7 +115,5 @@ void test2() {
       exit(-1);
     }
   }
-  printf("\ntest2 OK\n");  
+  printf("\ntest2 OK\n");
 }
-
-
